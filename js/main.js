@@ -1,6 +1,10 @@
 var password = "FAKE IT TILL YOU MAKE IT";
+password = password.toUpperCase();
 var password1 = "";
 var length = password.length;
+var fails = 0;
+var yes = new Audio("yes.wav");
+var no = new Audio("no.wav");
 
 for (i=0; i < length; i++){
   if (password.charAt(i) == " ") password1 = password1 + " ";
@@ -72,12 +76,52 @@ String.prototype.setChar = function(slot, char){
   if (slot > this.length - 1) return this.toString();
   else return this.substr(0, slot) + char + this.substr(slot+1);
 }
+
 function check(nr){
+  var usedLetter = false;
   for (i=0; i < length; i++){
     if (password.charAt(i) == letters[nr]){
       password1 = password1.setChar(i,letters[nr]);
+      usedLetter = true;
     }
   }
 
-  writePassword();
+  if (usedLetter == true){
+    yes.play();
+    var element = "let" + nr;
+    document.getElementById(element).style.background = "#003300";
+    document.getElementById(element).style.color = "#00C000";
+    document.getElementById(element).style.border = "3px solid #00C000";
+    document.getElementById(element).style.cursor = "default";
+
+    writePassword();
+  }
+
+  else {
+    no.play();
+    var element = "let" + nr;
+    document.getElementById(element).style.background = "#330000";
+    document.getElementById(element).style.color = "#C00000";
+    document.getElementById(element).style.border = "3px solid #C00000";
+    document.getElementById(element).style.cursor = "default";
+    document.getElementById(element).setAttribute("onclick",";");
+
+    fails++;
+    var image = "img/s" + fails + ".jpg";
+    document.getElementById("hangman").innerHTML = '<img src="'+ image +'" alt=""/>';
+  }
+
+  //win
+
+  if (password == password1){
+    document.getElementById("alphabet").innerHTML = "You did it! <br/><br/> The correct password is: " +password+
+    '<br/><br/><span class="reset" onclick="location.reload()">Try again?</span>';
+  }
+
+  //lose
+
+  if (fails >= 9){
+    document.getElementById("alphabet").innerHTML = "You've failed! <br/><br/> The correct password is: <br/>" +password+
+    '<br/><br/><span class="reset" onclick="location.reload()">Try again?</span>';
+  }
 }
